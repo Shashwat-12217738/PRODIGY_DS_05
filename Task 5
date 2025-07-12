@@ -5,43 +5,35 @@ library(ggplot2)
 library(leaflet)
 library(sf)
 
-# Load the dataset
 data <- read.csv("/mnt/data/traffic_accidents.csv", header = TRUE, stringsAsFactors = FALSE)
 
-# Check the structure of the dataset
 str(data)
 
-# Convert date and time to proper format (Assuming Date and Time columns exist)
 data$DateTime <- ymd_hms(paste(data$Date, data$Time))
 data$Hour <- hour(data$DateTime)
 data$Day <- weekdays(data$DateTime)
 
-# Analyze accidents by time of day
 time_plot <- ggplot(data, aes(x = Hour)) +
   geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
   theme_minimal() +
   labs(title = "Accidents by Hour of Day", x = "Hour", y = "Accident Count")
 
-# Analyze accidents by weather condition
 weather_plot <- ggplot(data, aes(x = Weather_Condition)) +
   geom_bar(fill = "tomato") +
   theme_minimal() +
   labs(title = "Accidents by Weather Condition", x = "Weather Condition", y = "Count") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Analyze accidents by road condition
 road_plot <- ggplot(data, aes(x = Road_Condition)) +
   geom_bar(fill = "purple") +
   theme_minimal() +
   labs(title = "Accidents by Road Condition", x = "Road Condition", y = "Count") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Visualize accident hotspots on a map (Assuming Latitude and Longitude columns exist)
 leaflet(data) %>%
   addTiles() %>%
   addCircles(lng = ~Longitude, lat = ~Latitude, radius = 50, color = "red", opacity = 0.5)
 
-# Print plots
 print(time_plot)
 print(weather_plot)
 print(road_plot)
